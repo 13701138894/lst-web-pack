@@ -15,3 +15,14 @@ bin 注册本地命令
 "bin": {
     "lst-pack": "./src/index.js"
 }
+
+
+1、webpack具体做了几件事
+    1、文件依赖解析
+    2、文件内容替换
+        1、loader文件转换
+        2、require('xxx.css')
+        3、require('xxx.less')
+        4、require('xxx.png')
+    3、tapable 
+    4、compile有很多钩子 ，每个钩子可以做额外的事情，plugin

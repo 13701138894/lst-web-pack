@@ -17,7 +17,8 @@ class LstPath {
         // 当前工作目录 执行当前命令所在目录
         this.root = process.cwd();
         // 存储所有代码
-        this.module = {}
+        this.module = {};
+        this.template = ''
     }
     parse(code,parent){
         let deps = [];
@@ -39,6 +40,9 @@ class LstPath {
         return { code, deps }
     }
     createModule(modulePath,name){
+        if(this.module[modulePath]){
+            // 出现循环引用
+        }
         const fileContent = fs.readFileSync(modulePath,'utf-8');
         // console.log(fileContent);
         // 替换后的代码和依赖数组
@@ -53,11 +57,26 @@ class LstPath {
             this.createModule(path.join(this.root,dep),'./'+dep)
         })
     }
+    generateModuleStr(){
+       let fnTemp = "";
+       Object.keys(this.module).forEach(name=>{
+           fnTemp += `${name}:${this.module[name]},`
+       }) 
+       return fnTemp
+    }
+    generateFile(){
+        let template = fs.readFileSync(path.resolve(__dirname,'./template.js'),'utf-8')
+        this.template = template.replace('__entry__',this.entry)
+                    .replace('__module_content__',this.generateModuleStr())
+        fs.writeFileSync('./dist/'+this.config.output.filename,this.template)
+    }
     start(){
         console.log('开始执行获取路径');
         const entryPath = path.resolve(this.root,this.entry);
         this.createModule(entryPath,this.entry)
         console.log(this.module)
+        // 生成新文件
+        this.generateFile()
         // console.log(this.root) 
         // C:\Users\Linshentai\Desktop\demo\webpack_demo
         // console.log(this.entry)
