@@ -60,7 +60,7 @@ class LstPath {
     generateModuleStr(){
        let fnTemp = "";
        Object.keys(this.module).forEach(name=>{
-           fnTemp += `${name}:${this.module[name]},`
+           fnTemp += `"${name}":${this.module[name]},`
        }) 
        return fnTemp
     }
@@ -69,6 +69,7 @@ class LstPath {
         this.template = template.replace('__entry__',this.entry)
                     .replace('__module_content__',this.generateModuleStr())
         fs.writeFileSync('./dist/'+this.config.output.filename,this.template)
+        console.log('写入文件完毕')
     }
     start(){
         console.log('开始执行获取路径');
